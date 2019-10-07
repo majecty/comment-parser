@@ -11,11 +11,21 @@ fn main() {
     let clipboard = std::str::from_utf8(&clipboard).expect("STDOUT is utf8 encoding");
     println!("{}", clipboard);
 
+    let git_comment = '|';
+    let comments: &[_] = &['/', git_comment];
     let lines: Vec<&str> = clipboard
         .lines()
-        .map(|line| line.trim().trim_start_matches('/').trim())
+        .map(|line| {
+            let trimmed = line.trim().trim_start_matches(comments).trim();
+            if trimmed == "" {
+                "\n"
+            } else {
+                trimmed
+            }
+        })
         .collect();
     let result = lines.join(" ");
+    let result = result.replace(" \n ", "\n");
     // println!("{}", result);
 
     let mut pbcopy = Command::new("pbcopy")
